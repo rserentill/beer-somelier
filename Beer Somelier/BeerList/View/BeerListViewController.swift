@@ -28,10 +28,6 @@ class BeerListViewController: UIViewController {
             sortButton.setTitle("ABV: \(order == .ascending ? "Asc" : "Desc")", for: .normal)
         }
     }
-    
-    // MARK: Data Sources
-    
-    private var beers = PublishSubject<[Beer]>()
 
     // MARK: View lifecycle
     
@@ -46,7 +42,6 @@ class BeerListViewController: UIViewController {
         // Data
         bindSearchTerm()
         bindErrors()
-        bindBeers()
         setupTableDataSourceBindings()
     }
     
@@ -86,18 +81,9 @@ class BeerListViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    private func bindBeers() {
-        
-        beersViewModel
-            .beers
-            .observeOn(MainScheduler.instance)
-            .bind(to: beers)
-            .disposed(by: disposeBag)
-    }
-    
     private func setupTableDataSourceBindings() {
         
-        beers
+        beersViewModel.beers
             .bind(to: tableView.rx.items(cellIdentifier: Cells.beerIdentifier, cellType: BeerTableViewCell.self)) { row, beer, cell in
                 cell.displayData(with: beer)
             }
